@@ -1,0 +1,5 @@
+services:
+  - docker
+
+script:
+  - docker build -t bmxmale/docker-symfony4-php:dev .
