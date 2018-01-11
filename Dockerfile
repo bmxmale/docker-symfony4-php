@@ -31,7 +31,9 @@ RUN \
     docker-php-ext-install \
         intl \
         pcntl \
-        opcache
+        opcache \
+        pdo \
+        pdo_mysql
 
 COPY container /
 
