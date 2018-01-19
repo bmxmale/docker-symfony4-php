@@ -1,4 +1,4 @@
-FROM php:7.2-fpm
+FROM php:7.1-fpm
 MAINTAINER Mateusz Lerczak <mlerczak@pl.sii.eu>
 
 ARG SYMFONY_ROOT="/srv/symfony"
@@ -9,6 +9,7 @@ ENV PHP_PM_MAX_CHILDREN 10
 ENV PHP_PM_START_SERVERS 1
 ENV PHP_PM_MIN_SPARE_SERVERS 1
 ENV PHP_PM_MAX_SPARE_SERVERS 6
+ENV TERM xterm
 
 RUN \
     apt-get update \
@@ -36,6 +37,10 @@ RUN \
         pdo_mysql
 
 COPY container /
+
+RUN \
+    pecl install xdebug \
+    && sed -i "1izend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" /usr/local/etc/php/conf.d/xdebug.ini
 
 RUN \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
