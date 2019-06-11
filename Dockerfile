@@ -1,7 +1,8 @@
-FROM php:7.2-fpm
-MAINTAINER Mateusz Lerczak <mlerczak@pl.sii.eu>
+FROM php:7.3-fpm
+MAINTAINER Mateusz Lerczak <mateusz@lerczak.eu>
 
 ARG SYMFONY_ROOT="/srv/symfony"
+ARG PATH_XDEBUG_INI="/usr/local/etc/php/conf.d/xdebug.ini"
 
 ENV PHP_PORT 9000
 ENV PHP_PM dynamic
@@ -18,10 +19,8 @@ RUN \
         gnupg
 
 RUN \
-    curl -sL https://deb.nodesource.com/setup_6.x | bash -
-
-RUN \
-    apt-get install -y \
+    curl -sL https://deb.nodesource.com/setup_6.x | bash - \
+    && apt-get install -y \
         nodejs \
         supervisor \
         ssmtp \
@@ -35,7 +34,13 @@ RUN \
         pdo \
         pdo_mysql
 
+
 COPY container /
+
+RUN \
+    pecl install xdebug \
+    && sed -i "1izend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" ${PATH_XDEBUG_INI}
+
 
 RUN \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
